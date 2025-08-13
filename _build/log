@@ -1,0 +1,16 @@
+# dune exec jsonml
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /home/matchew/.cache/dune/db
+# Workspace root: /home/matchew/coding/jsonml
+# Auto-detected concurrency: 12
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /home/matchew/.opam/default/bin/ocamlc.opt -config > /tmp/dune_c57172_output
