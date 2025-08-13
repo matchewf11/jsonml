@@ -1,4 +1,4 @@
 (executable
  (public_name jsonml)
  (name main)
- (libraries jsonml))
+ (libraries json_ml))

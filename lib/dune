@@ -1,2 +1,2 @@
 (library
- (name jsonml))
+ (name json_ml))

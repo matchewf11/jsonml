@@ -1,1 +1,58 @@
-let () = print_endline "Hello, World!"
+type token =
+  | Left_Brace
+  | Right_Brace
+  | Left_Bracket
+  | Right_Bracket
+  | Comma
+  | Colon
+  | Null
+  | String of string
+  | Number of float
+  | Bool of bool
+
+let result =
+  let test_json =
+    try In_channel.with_open_text "test.json" In_channel.input_all
+    with Sys_error msg -> failwith ("Failed to read from file: " ^ msg)
+  in
+  let lexer json =
+    let json_len = String.length json in
+    let rec helper acc i =
+      if json_len <= i then Ok acc
+      else
+        match String.get json i with
+        | '{' -> helper (Left_Brace :: acc) (i + 1)
+        | '}' -> helper (Right_Brace :: acc) (i + 1)
+        | '[' -> helper (Left_Bracket :: acc) (i + 1)
+        | ']' -> helper (Right_Bracket :: acc) (i + 1)
+        | ',' -> helper (Comma :: acc) (i + 1)
+        | ':' -> helper (Colon :: acc) (i + 1)
+        | 'n' ->
+            if i + 4 <= json_len && String.sub json i 4 = "null" then
+              helper (Null :: acc) (i + 4)
+            else Error "Invalid Json"
+        | 't' ->
+            if i + 4 <= json_len && String.sub json i 4 = "true" then
+              helper (Bool true :: acc) (i + 4)
+            else Error "Invalid Json"
+        | 'f' ->
+            if i + 5 <= json_len && String.sub json i 5 = "false" then
+              helper (Bool false :: acc) (i + 5)
+            else Error "Invalid Json"
+        | '-' | '0' .. '9' | '.' -> (
+            match Json_ml.get_num json i with
+            | Error msg -> Error msg
+            | Ok (v, l) -> helper (Number v :: acc) (i + l))
+        | '"' -> Error "implement string"
+        | _ -> Error "invalid json"
+    in
+    helper [] 0
+  in
+  lexer test_json
+
+let () =
+  match Json_ml.get_num "0123" 0 with
+  | Error msg -> print_endline msg
+  | Ok (v, l) ->
+      print_float v;
+      print_int l
