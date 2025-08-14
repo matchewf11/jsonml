@@ -21,6 +21,7 @@ let result =
       if json_len <= i then Ok acc
       else
         match String.get json i with
+        | '\n' | ' ' -> helper acc (i + 1)
         | '{' -> helper (Left_Brace :: acc) (i + 1)
         | '}' -> helper (Right_Brace :: acc) (i + 1)
         | '[' -> helper (Left_Bracket :: acc) (i + 1)
@@ -43,8 +44,11 @@ let result =
             match Json_ml.get_num json i with
             | Error msg -> Error msg
             | Ok (v, l) -> helper (Number v :: acc) (i + l))
-        | '"' -> Error "implement string"
-        | _ -> Error "invalid json"
+        | '"' -> (
+            match Json_ml.get_str json i with
+            | Error msg -> Error msg
+            | Ok (v, l) -> helper (String v :: acc) (i + l))
+        | c -> Error (Printf.sprintf "invalid json: %c" c)
     in
     helper [] 0
   in
